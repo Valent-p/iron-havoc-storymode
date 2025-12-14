@@ -1,0 +1,49 @@
+[gd_scene load_steps=10 format=3 uid="uid://m0jjg6h4qys3"]
+
+[ext_resource type="Script" uid="uid://btngxm0oiwcub" path="res://chars/player/player.gd" id="1_hjs3x"]
+[ext_resource type="PackedScene" uid="uid://b4lb6glpdyo2h" path="res://assets/tanks/assault/simple_base.blend" id="1_wnykj"]
+[ext_resource type="PackedScene" uid="uid://cngwsfyp4nfuc" path="res://assets/tanks/assault/simple_turret.blend" id="2_hjs3x"]
+[ext_resource type="PackedScene" uid="uid://j020cuo4drou" path="res://assets/tanks/assault/simple_wheels.blend" id="3_lqe1y"]
+[ext_resource type="PackedScene" uid="uid://b56qn1qoegs" path="res://assets/tanks/assault/simple_gun.blend" id="4_qitdr"]
+[ext_resource type="PackedScene" uid="uid://dfmtjrvn28ayk" path="res://components/movement_component.tscn" id="5_lqe1y"]
+[ext_resource type="PackedScene" uid="uid://b405cp1sq55jv" path="res://components/input_component.tscn" id="6_d4b2g"]
+[ext_resource type="PackedScene" uid="uid://col0xwblk5i0v" path="res://components/aiming_component.tscn" id="7_gyj1s"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_d4b2g"]
+size = Vector3(1.8, 1, 2)
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_hjs3x")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, -0.1)
+shape = SubResource("BoxShape3D_d4b2g")
+
+[node name="Model" type="Node3D" parent="."]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="simple_base" parent="Model" instance=ExtResource("1_wnykj")]
+
+[node name="simple_turret" parent="Model" instance=ExtResource("2_hjs3x")]
+
+[node name="simple_gun" parent="Model/simple_turret" instance=ExtResource("4_qitdr")]
+
+[node name="Camera3D" type="Camera3D" parent="Model/simple_turret/simple_gun"]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 26.69195, 44.67062)
+
+[node name="simple_wheels" parent="Model" instance=ExtResource("3_lqe1y")]
+
+[node name="Components" type="Node" parent="."]
+
+[node name="MovementComponent" parent="Components" node_paths=PackedStringArray("player", "model", "turret_pivot") instance=ExtResource("5_lqe1y")]
+player = NodePath("../..")
+model = NodePath("../../Model")
+turret_pivot = NodePath("../../Model/simple_turret")
+
+[node name="InputComponent" parent="Components" node_paths=PackedStringArray("movement_component", "turret_pivot") instance=ExtResource("6_d4b2g")]
+movement_component = NodePath("../MovementComponent")
+turret_pivot = NodePath("../../Model/simple_turret")
+
+[node name="AimingComponent" parent="Components" node_paths=PackedStringArray("turret_pivot", "gun_pivot") instance=ExtResource("7_gyj1s")]
+turret_pivot = NodePath("../../Model/simple_turret")
+gun_pivot = NodePath("../../Model/simple_turret/simple_gun")
